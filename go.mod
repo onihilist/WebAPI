@@ -1,4 +1,4 @@
-module github.com/onihilist/SimpleAPI
+module github.com/onihilist/WebAPI
 
 go 1.23.3
 

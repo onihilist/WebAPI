@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/onihilist/SimpleAPI/pkg/api"
-	"github.com/onihilist/SimpleAPI/pkg/databases"
+	"github.com/onihilist/WebAPI/pkg/api"
+	"github.com/onihilist/WebAPI/pkg/databases"
 
 	"github.com/gin-gonic/gin"
 )
