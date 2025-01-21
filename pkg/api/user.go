@@ -46,3 +46,7 @@ func GetUserProfile(c *gin.Context, db *sql.DB) {
 	c.JSON(http.StatusOK, user)
 
 }
+
+func CreateUserProfile(c *gin.Context, db *sql.DB) {
+
+}
