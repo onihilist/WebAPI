@@ -17,7 +17,9 @@ func SetupRouter() *gin.Engine {
 	//r.SetTrustedProxies(nil)
 
 	r.GET("/ping", api.Ping)
-	r.GET("/profile/:name", api.GetUserProfile)
+	r.GET("/profile/:name", func(c *gin.Context) {
+		api.GetUserProfile(c, db)
+	})
 
 	adminAuth := r.Group("/", gin.BasicAuth(GetMiddlewareAdminAuth(db)))
 	adminAuth.POST("admin", MiddlewareAdmin)
