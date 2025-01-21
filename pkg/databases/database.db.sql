@@ -11,3 +11,5 @@ CREATE TABLE IF NOT EXISTS "users" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 COMMIT;
+
+INSERT INTO users (username, password, email, creationDate, lastConnection, lastIP) VALUES ("onhlt", "root", "onhlt@nihilism.moe", "1737480492", "1737480492", "127.0.0.1");

@@ -7,11 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var db = make(map[string]string)
-
 func SetupRouter() *gin.Engine {
 
-	databases.DatabaseConnect()
+	db := databases.DatabaseConnect()
+	databases.DatabaseHealthCheck(db)
 	// gin.DisableConsoleColor()
 
 	r := gin.Default()
@@ -20,7 +19,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/ping", api.Ping)
 	r.GET("/profile/:name", api.GetUserProfile)
 
-	adminAuth := r.Group("/", gin.BasicAuth(GetMiddlewareAdminAuth()))
+	adminAuth := r.Group("/", gin.BasicAuth(GetMiddlewareAdminAuth(db)))
 	adminAuth.POST("admin", MiddlewareAdmin)
 
 	return r
