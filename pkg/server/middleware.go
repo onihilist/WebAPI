@@ -6,25 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var VALID_TOKENS = map[string]bool{
-	"Bearer 6ddebcd7954bfb7baf0f694c1bb7d243f6c8077e509e1520ebf28b1572ce7be0": true,
-	// Add some valid tokens here
-}
-
-func CheckBearerToken(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	if authHeader == "" || !VALID_TOKENS[authHeader] {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		c.Abort()
-		return
+func GetMiddlewareAdminAuth() gin.Accounts {
+	return gin.Accounts{
+		"foo":  "bar",
+		"manu": "123",
 	}
-	c.JSON(http.StatusAccepted, gin.H{
-		"status":  http.StatusAccepted,
-		"message": "Bearer OK",
-	})
-	c.Next()
 }
 
-func HandlerMiddleware(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, authorized user!"))
+func MiddlewareAdmin(c *gin.Context) {
+	user := c.MustGet(gin.AuthUserKey).(string)
+
+	var json struct {
+		Value string `json:"value" binding:"required"`
+	}
+
+	if c.Bind(&json) == nil {
+		db[user] = json.Value
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK})
+	}
 }
