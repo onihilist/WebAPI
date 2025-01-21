@@ -11,7 +11,7 @@ var db = make(map[string]string)
 
 func SetupRouter() *gin.Engine {
 
-	databases.KusabaConnect()
+	databases.DatabaseConnect()
 	// gin.DisableConsoleColor()
 
 	r := gin.Default()
