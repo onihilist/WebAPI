@@ -9,7 +9,7 @@ import (
 
 const Source = "local"
 
-func KusabaConnect() *sql.DB {
+func DatabaseConnect() *sql.DB {
 	db, err := sql.Open("sqlite3", "../../database.db")
 	if err != nil {
 		log.Fatal(err)
@@ -17,7 +17,7 @@ func KusabaConnect() *sql.DB {
 	return db
 }
 
-func KusabaDisconnect(db *sql.DB) {
+func DatabaseDisconnect(db *sql.DB) {
 	defer db.Close()
 }
 
