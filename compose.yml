@@ -1,0 +1,51 @@
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      - DB_HOST=mariadb
+      - DB_USER=appuser
+      - DB_PASSWORD=letmein
+      - DB_NAME=appdb
+
+  mariadb:
+      image: mariadb:10.6
+      working_dir: /application
+      restart: always
+      networks:
+        - labnet
+      volumes:
+        - maria_data:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=Th3R00tPassw0rd
+        - MYSQL_DATABASE=appdb
+        - MYSQL_USER=appuser
+        - MYSQL_PASSWORD=letmein
+      ports:
+        - "3002:3306"
+      healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+
+volumes:
+  maria_data:
+
+networks:
+  labnet:
+    driver: bridge
