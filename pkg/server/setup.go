@@ -1,27 +1,17 @@
 package server
 
 import (
-	"github.com/onihilist/WebAPI/pkg/api"
-	"github.com/onihilist/WebAPI/pkg/databases"
-
 	"github.com/gin-gonic/gin"
+	"github.com/onihilist/WebAPI/pkg/databases"
 )
-
-var db = make(map[string]string)
 
 func SetupRouter() *gin.Engine {
 
-	databases.DatabaseConnect()
 	// gin.DisableConsoleColor()
 
-	r := gin.Default()
-	//r.SetTrustedProxies(nil)
+	db := databases.DatabaseConnect()
+	databases.DatabaseHealthCheck(db)
 
-	r.GET("/ping", api.Ping)
-	r.GET("/profile/:name", api.GetUserProfile)
+	return LoadRoutes(db)
 
-	adminAuth := r.Group("/", gin.BasicAuth(GetMiddlewareAdminAuth()))
-	adminAuth.POST("admin", MiddlewareAdmin)
-
-	return r
 }
