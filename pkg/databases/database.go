@@ -17,18 +17,38 @@ func DatabaseConnect() *sql.DB {
 }
 
 func DatabaseHealthCheck(db *sql.DB) {
-	rows, err := db.Query("SELECT name FROM sqlite_master WHERE type='table'") // Add an array to see if all the tables are created
+	rows, err := db.Query("SELECT name FROM sqlite_master WHERE type='table'")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
+
+	actualTables := make(map[string]struct{})
+	expectedTables := map[string]struct{}{
+		"sqlite_sequence": {},
+		"users":           {},
+	}
 
 	var tableName string
 	for rows.Next() {
 		if err := rows.Scan(&tableName); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Table:", tableName)
+		actualTables[tableName] = struct{}{}
+	}
+
+	for expectedTable := range expectedTables {
+		if _, exists := actualTables[expectedTable]; !exists {
+			fmt.Printf("Missing expected table: %s\n", expectedTable)
+		} else {
+			fmt.Printf("Table exists: %s\n", expectedTable)
+		}
+	}
+
+	for actualTable := range actualTables {
+		if _, exists := expectedTables[actualTable]; !exists {
+			fmt.Printf("Unexpected table found: %s\n", actualTable)
+		}
 	}
 }
 
