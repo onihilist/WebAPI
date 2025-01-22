@@ -1,7 +1,9 @@
 package api
 
 import (
+	"crypto/md5"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,7 +14,7 @@ import (
 )
 
 type User struct {
-	ID             int
+	ID             *int
 	Username       string
 	Password       string
 	Email          string
@@ -57,6 +59,36 @@ func GetUserProfile(c *gin.Context, db *sql.DB) gin.H {
 
 }
 
-func CreateUserProfile(c *gin.Context, db *sql.DB) {
+func CreateUserProfile(db *sql.DB, user User) {
+
+	hash := md5.Sum([]byte(user.Password))
+	hashString := hex.EncodeToString(hash[:])
+
+	if user.Phone != nil {
+		req := `INSERT INTO users (username, password, email, phone, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?);`
+		databases.DoRequest(
+			db,
+			req,
+			user.Username,
+			hashString,
+			user.Email,
+			user.Phone,
+			user.CreationDate,
+			user.LastConnection,
+			user.LastIP,
+		)
+	} else {
+		req := `INSERT INTO users (username, password, email, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?);`
+		databases.DoRequest(
+			db,
+			req,
+			user.Username,
+			hashString,
+			user.Email,
+			user.CreationDate,
+			user.LastConnection,
+			user.LastIP,
+		)
+	}
 
 }

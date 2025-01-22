@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"phone"	TEXT UNIQUE,
 	"creationDate"	TEXT NOT NULL,
 	"lastConnection"	TEXT NOT NULL,
-	"lastIP"	TEXT NOT NULL UNIQUE,
+	"lastIP"	TEXT NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 COMMIT;
