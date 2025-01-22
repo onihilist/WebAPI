@@ -22,7 +22,7 @@ type User struct {
 	LastIP         string
 }
 
-func GetUserProfile(c *gin.Context, db *sql.DB) {
+func GetUserProfile(c *gin.Context, db *sql.DB) gin.H {
 	username := c.Param("name")
 
 	query := "SELECT id, username, password, email, phone, creationDate, lastConnection, lastIP FROM users WHERE username = ?"
@@ -34,7 +34,7 @@ func GetUserProfile(c *gin.Context, db *sql.DB) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User  not found"})
-			return
+			return nil
 		}
 		log.Fatal(err)
 	}
@@ -43,7 +43,17 @@ func GetUserProfile(c *gin.Context, db *sql.DB) {
 		fmt.Println("Phone number is not available")
 	}
 
-	c.JSON(http.StatusOK, user)
+	return gin.H{
+		"status":         http.StatusOK,
+		"userId":         user.ID,
+		"username":       user.Username,
+		"password":       user.Password,
+		"email":          user.Email,
+		"phone":          user.Phone,
+		"creationDate":   user.CreationDate,
+		"lastConnection": user.LastConnection,
+		"lastIP":         user.LastIP,
+	}
 
 }
 

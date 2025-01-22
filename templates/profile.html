@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Username }}'s profile</title>
+</head>
+<body>
+    <h1>Welcome {{ .Username }} !</h1>
+    <table>
+        <tr>
+          <th>id</th>
+          <th>username</th>
+          <th>password</th>
+          <th>email</th>
+          <th>phone</th>
+          <th>creationDate</th>
+          <th>lastConnection</th>
+          <th>lastIP</th>
+        </tr>
+        <tr>
+          <td>{{ .UserID }}</td>
+          <td>{{ .Username }}</td>
+          <td>{{ .Password }}</td>
+          <td>{{ .Email }}</td>
+          <td>{{ .Phone }}</td>
+          <td>{{ .CreationDate }}</td>
+          <td>{{ .LastConnection }}</td>
+          <td>{{ .LastIP }}</td>
+        </tr>
+      </table>
+</body>
+</html>
