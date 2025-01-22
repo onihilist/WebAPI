@@ -5,14 +5,20 @@ import (
 	"fmt"
 	"log"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func DatabaseConnect() *sql.DB {
-	db, err := sql.Open("sqlite", "database.db")
+	dsn := "appuser:letmein@tcp(mariadb:3306)/appdb"
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+
 	return db
 }
 

@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/onihilist/WebAPI/pkg/databases"
-	_ "modernc.org/sqlite"
 )
 
 type User struct {
