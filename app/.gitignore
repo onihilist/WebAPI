@@ -3,6 +3,3 @@
 database.db
 database.db-journal
 database.sqbpro
-
-# GOLANG
-go.sum

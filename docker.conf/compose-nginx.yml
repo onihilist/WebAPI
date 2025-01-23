@@ -3,16 +3,12 @@
 # ======================================================================================================================
 
 services:
-  app:
-    build:
-      context: ../
-      dockerfile: Dockerfile
+
+  nginx:
+    image: nginx:latest
     ports:
-      - "8080:8080"
-    networks:
-        - labnet
-    environment:
-      - DB_HOST=mariadb
-      - DB_USER=appuser
-      - DB_PASSWORD=letmein
-      - DB_NAME=appdb
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app

@@ -10,20 +10,21 @@ services:
 
     # MariaDB
     mariadb:
-      image: mariadb:${MARIADB_VERSION}
+      image: mariadb:10.6
       working_dir: /application
       restart: always
       networks:
         - labnet
       volumes:
         - maria_data:/var/lib/mysql
+        - ./app/pkg/databases/database.db.sql:/docker-entrypoint-initdb.d/database.sql
       environment:
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=Th3R00tPassw0rd
+        - MYSQL_DATABASE=appdb
+        - MYSQL_USER=appuser
+        - MYSQL_PASSWORD=letmein
       ports:
-        - "${MYSQL_PORT}:3306"
+        - "3002:3306"
 
 # ======================================================================================================================
 # VOLUMES

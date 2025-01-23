@@ -4,11 +4,11 @@ FROM golang:1.23-alpine
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers go.mod et go.sum
-COPY app/go.mod app/go.sum ./
-
 # Télécharger les dépendances
 RUN go mod download
+
+# Copier les fichiers go.mod et go.sum
+COPY app/go.mod app/go.sum ./
 
 # Copier le reste des fichiers de l'application
 COPY app/ .
