@@ -23,7 +23,7 @@ func DatabaseConnect() *sql.DB {
 }
 
 func DatabaseHealthCheck(db *sql.DB) {
-	rows, err := db.Query("SELECT name FROM sqlite_master WHERE type='table'")
+	rows, err := db.Query("SELECT table_name FROM maria_schema WHERE table_type='BASE TABLE'")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,8 +31,8 @@ func DatabaseHealthCheck(db *sql.DB) {
 
 	actualTables := make(map[string]struct{})
 	expectedTables := map[string]struct{}{
-		"sqlite_sequence": {},
-		"users":           {},
+		"maria_schema": {},
+		"users":        {},
 	}
 
 	var tableName string
@@ -42,6 +42,8 @@ func DatabaseHealthCheck(db *sql.DB) {
 		}
 		actualTables[tableName] = struct{}{}
 	}
+
+	fmt.Printf("Actual tables : %s\n", actualTables)
 
 	for expectedTable := range expectedTables {
 		if _, exists := actualTables[expectedTable]; !exists {

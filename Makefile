@@ -1,6 +1,15 @@
 build:
 	@docker compose up --build
 
+clean-restart:
+	@docker compose down mariadb -v
+	@docker compose down app -v
+	@docker image prune -a -f
+	@docker network prune -f
+	@docker volume prune -a -f
+	@docker compose up mariadb -d
+	@docker compose up app
+
 up:
 	@docker compose up -d
 

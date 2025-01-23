@@ -1,12 +1,13 @@
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    depends_on:
-      mariadb:
-        condition: service_healthy
+    networks:
+        - labnet
     environment:
       - DB_HOST=mariadb
       - DB_USER=appuser
@@ -21,6 +22,7 @@ services:
         - labnet
       volumes:
         - maria_data:/var/lib/mysql
+        - ./app/pkg/databases/database.db.sql:/docker-entrypoint-initdb.d/database.sql
       environment:
         - MYSQL_ROOT_PASSWORD=Th3R00tPassw0rd
         - MYSQL_DATABASE=appdb
@@ -28,11 +30,6 @@ services:
         - MYSQL_PASSWORD=letmein
       ports:
         - "3002:3306"
-      healthcheck:
-        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
 
   nginx:
     image: nginx:latest

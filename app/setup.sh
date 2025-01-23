@@ -7,3 +7,15 @@ go get github.com/mattn/go-sqlite3
 #      docker run -it --entrypoint /bin/sh webapi-app                     (Debug inside the container)
 #      docker run -p 8080:8080 webapi-app                                 (Run docker container)
 #      docker inspect --format='{{json .State.Health}}' <container_id>    (Check the health of a container)
+
+
+
+# TO RESTART CLEAN DOCKER CONTAINER
+
+#      docker compose down mariadb -v
+#      docker compose down app -v
+#      docker image prune -a -f
+
+#      docker compose up mariadb -d
+#      docker compose up nginx -d
+#      docker compose up app
