@@ -17,7 +17,7 @@ services:
         - labnet
       volumes:
         - maria_data:/var/lib/mysql
-        - ./app/pkg/databases/database.db.sql:/docker-entrypoint-initdb.d/database.sql
+        - ./initdb/database.db.sql:/docker-entrypoint-initdb.d/database.sql
       environment:
         - MYSQL_ROOT_PASSWORD=Th3R00tPassw0rd
         - MYSQL_DATABASE=appdb
@@ -25,6 +25,14 @@ services:
         - MYSQL_PASSWORD=letmein
       ports:
         - "3002:3306"
+
+# ======================================================================================================================
+# NETWORKS
+# ======================================================================================================================
+
+networks:
+  labnet:
+    driver: bridge
 
 # ======================================================================================================================
 # VOLUMES

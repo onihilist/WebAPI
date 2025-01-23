@@ -3,9 +3,9 @@ FROM golang:1.23-alpine
 
 WORKDIR /app
 
-RUN go mod download
-
 COPY app/go.mod app/go.sum ./
+
+RUN go mod download
 
 COPY app/ .
 

@@ -16,6 +16,6 @@ go get github.com/mattn/go-sqlite3
 #      docker compose down app -v
 #      docker image prune -a -f
 
-#      docker compose up mariadb -d
+#      docker compose -f docker.conf/compose-maria.yml up -d
 #      docker compose up nginx -d
 #      docker compose up app

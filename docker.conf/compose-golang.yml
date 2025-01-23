@@ -16,3 +16,7 @@ services:
       - DB_USER=appuser
       - DB_PASSWORD=letmein
       - DB_NAME=appdb
+
+networks:
+  labnet:
+    driver: bridge
