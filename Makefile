@@ -12,5 +12,9 @@ up:
 down:
 	@docker compose down -v
 
+delete:
+	@docker rm mariadb
+	@docker rm app
+
 restart:
 	@docker compose restart
