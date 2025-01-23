@@ -19,16 +19,19 @@ func LoadRoutes(db *sql.DB) *gin.Engine {
 	r.GET("/ping", api.Ping)
 	r.GET("/profile/:name", func(c *gin.Context) {
 		userData := api.GetUserProfile(c, db)
-		c.HTML(http.StatusOK, "profile.html", gin.H{
-			"UserID":         userData["userId"],
-			"Username":       userData["username"],
-			"Password":       userData["password"],
-			"Email":          userData["email"],
-			"Phone":          userData["phone"],
-			"CreationDate":   userData["creationDate"],
-			"LastConnection": userData["lastConnection"],
-			"LastIP":         userData["lastIP"],
-		})
+
+		if userData["userId"] != nil {
+			c.HTML(http.StatusOK, "profile.html", gin.H{
+				"UserID":         userData["userId"],
+				"Username":       userData["username"],
+				"Password":       userData["password"],
+				"Email":          userData["email"],
+				"Phone":          userData["phone"],
+				"CreationDate":   userData["creationDate"],
+				"LastConnection": userData["lastConnection"],
+				"LastIP":         userData["lastIP"],
+			})
+		}
 	})
 	r.GET("/profile/create", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "create-user.html", nil)

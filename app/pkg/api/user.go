@@ -35,7 +35,7 @@ func GetUserProfile(c *gin.Context, db *sql.DB) gin.H {
 	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Phone, &user.CreationDate, &user.LastConnection, &user.LastIP)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User  not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return nil
 		}
 		log.Fatal(err)
