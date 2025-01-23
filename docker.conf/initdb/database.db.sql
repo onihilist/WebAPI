@@ -1,10 +1,28 @@
 
+-- Ensure the user exists before granting privileges
+CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'letmein';
+
+-- Give all privileges to appuser
 GRANT ALL PRIVILEGES ON *.* TO 'appuser'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
+-- Create a permissions table for users
+CREATE TABLE IF NOT EXISTS `permissions` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `permission` VARCHAR(255) NOT NULL,
+    PRIMARY KEY(`id`)
+);
+
+-- Insert permissions in the table
+INSERT INTO `permissions` (`permission`) VALUES
+('admin'),
+('moderator'),
+('user');
 
 -- Create a users table
 CREATE TABLE IF NOT EXISTS `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `permissionId` INT NOT NULL,
     `username` VARCHAR(255) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL UNIQUE,
@@ -12,14 +30,15 @@ CREATE TABLE IF NOT EXISTS `users` (
     `creationDate` DATETIME NOT NULL,
     `lastConnection` DATETIME NOT NULL,
     `lastIP` VARCHAR(45) NOT NULL,
-    PRIMARY KEY(`id`)
+    PRIMARY KEY(`id`),
+    FOREIGN KEY (`permissionId`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
 );
 
-ALTER TABLE `users` MODIFY `id` INT NOT NULL AUTO_INCREMENT;
-
 -- Insert a sample user into the users table
-INSERT INTO `users` (username, password, email, creationDate, lastConnection, lastIP) 
-VALUES ('onhlt', 'passw0rd', 'onhlt@nihilism.moe', NOW(), NOW(), '127.0.0.1');
+INSERT INTO `users` (permissionId, username, password, email, creationDate, lastConnection, lastIP) VALUES 
+(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', NOW(), NOW(), '127.0.0.1'),
+(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', NOW(), NOW(), '127.0.0.1'),
+(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', NOW(), NOW(), '127.0.0.1');
 
 -- Create a table to store schema information
 CREATE TABLE IF NOT EXISTS `maria_schema` (

@@ -6,13 +6,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/onihilist/WebAPI/pkg/api"
 	_ "modernc.org/sqlite"
 )
 
 var dataAuth = make(map[string]string)
 
 func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
-	rows, err := db.Query("SELECT username, password FROM users")
+	rows, err := db.Query("SELECT username, password FROM users WHERE permissionId=1")
 	if err != nil {
 		fmt.Println("Error executing query:", err)
 		return gin.Accounts{}
@@ -21,12 +22,12 @@ func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
 
 	accounts := gin.Accounts{}
 	for rows.Next() {
-		var username, password string
-		if err := rows.Scan(&username, &password); err != nil {
+		var user api.User
+		if err := rows.Scan(&user.Username, &user.Password); err != nil {
 			fmt.Println("Error scanning row:", err)
 			continue
 		}
-		accounts[username] = password
+		accounts[user.Username] = user.Password
 	}
 
 	return accounts

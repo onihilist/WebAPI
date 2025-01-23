@@ -33,6 +33,7 @@ func DatabaseHealthCheck(db *sql.DB) {
 	expectedTables := map[string]struct{}{
 		"maria_schema": {},
 		"users":        {},
+		"permissions":  {},
 	}
 
 	var tableName string
