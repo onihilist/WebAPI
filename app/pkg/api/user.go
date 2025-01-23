@@ -61,37 +61,35 @@ func GetUserProfile(c *gin.Context, db *sql.DB) gin.H {
 }
 
 func CreateUserProfile(db *sql.DB, user User) {
+    hash := md5.Sum([]byte(user.Password))
+    hashString := hex.EncodeToString(hash[:])
 
-	hash := md5.Sum([]byte(user.Password))
-	hashString := hex.EncodeToString(hash[:])
-
-	if user.Phone != nil {
-		req := `INSERT INTO users (permissionId, username, password, email, phone, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
-		databases.DoRequest(
-			db,
-			req,
-			user.PermissionID,
-			user.Username,
-			hashString,
-			user.Email,
-			user.Phone,
-			time.Now(),
-			time.Now(),
-			user.LastIP,
-		)
-	} else {
-		req := `INSERT INTO users (permissionId, username, password, email, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?);`
-		databases.DoRequest(
-			db,
-			req,
-			user.PermissionID,
-			user.Username,
-			hashString,
-			user.Email,
-			time.Now(),
-			time.Now(),
-			user.LastIP,
-		)
-	}
-
+    if user.Phone != nil {
+        req := `INSERT INTO users (permissionId, username, password, email, phone, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+        databases.DoRequest(
+            db,
+            req,
+            user.PermissionID,
+            user.Username,
+            hashString,
+            user.Email,
+            user.Phone,
+            time.Now(),
+            time.Now(),
+            user.LastIP,
+        )
+    } else {
+        req := `INSERT INTO users (permissionId, username, password, email, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?);`
+        databases.DoRequest(
+            db,
+            req,
+            user.PermissionID,
+            user.Username,
+            hashString,
+            user.Email,
+            time.Now(),
+            time.Now(),
+            user.LastIP,
+        )
+    }
 }
