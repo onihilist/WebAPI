@@ -35,10 +35,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 );
 
 -- Insert a sample user into the users table
-INSERT INTO `users` (permissionId, username, password, email, creationDate, lastConnection, lastIP) VALUES 
-(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', NOW(), NOW(), '127.0.0.1'),
-(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', NOW(), NOW(), '127.0.0.1'),
-(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', NOW(), NOW(), '127.0.0.1');
+INSERT INTO `users` (permissionId, username, password, email, phone, creationDate, lastConnection, lastIP) VALUES 
+(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', NULL, NOW(), NOW(), '127.0.0.1'),
+(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', "0606060606", NOW(), NOW(), '127.0.0.1'),
+(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', "0707070707", NOW(), NOW(), '127.0.0.1');
 
 -- Create a table to store schema information
 CREATE TABLE IF NOT EXISTS `maria_schema` (

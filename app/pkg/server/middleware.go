@@ -2,11 +2,11 @@ package server
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/onihilist/WebAPI/pkg/api"
+	"github.com/onihilist/WebAPI/pkg/utils"
 	_ "modernc.org/sqlite"
 )
 
@@ -15,7 +15,7 @@ var dataAuth = make(map[string]string)
 func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
 	rows, err := db.Query("SELECT username, password FROM users WHERE permissionId=1")
 	if err != nil {
-		fmt.Println("Error executing query:", err)
+		utils.LogError("[MariaDB] - %s", err.Error())
 		return gin.Accounts{}
 	}
 	defer rows.Close()
@@ -24,7 +24,7 @@ func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
 	for rows.Next() {
 		var user api.User
 		if err := rows.Scan(&user.Username, &user.Password); err != nil {
-			fmt.Println("Error scanning row:", err)
+			utils.LogError("[MariaDB] - %s", err.Error())
 			continue
 		}
 		accounts[user.Username] = user.Password

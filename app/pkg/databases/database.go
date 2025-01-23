@@ -2,21 +2,20 @@ package databases
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/onihilist/WebAPI/pkg/utils"
 )
 
 func DatabaseConnect() *sql.DB {
 	dsn := "appuser:letmein@tcp(mariadb:3306)/appdb"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatal(err)
+		utils.LogFatal("[MariaDB] - %s", err.Error())
 	}
 
 	if err := db.Ping(); err != nil {
-		log.Fatal(err)
+		utils.LogFatal("[MariaDB] - %s", err.Error())
 	}
 
 	return db
@@ -25,7 +24,7 @@ func DatabaseConnect() *sql.DB {
 func DatabaseHealthCheck(db *sql.DB) {
 	rows, err := db.Query("SELECT table_name FROM maria_schema WHERE table_type='BASE TABLE'")
 	if err != nil {
-		log.Fatal(err)
+		utils.LogFatal("[MariaDB] - %s", err.Error())
 	}
 	defer rows.Close()
 
@@ -39,24 +38,22 @@ func DatabaseHealthCheck(db *sql.DB) {
 	var tableName string
 	for rows.Next() {
 		if err := rows.Scan(&tableName); err != nil {
-			log.Fatal(err)
+			utils.LogFatal("[MariaDB] - %s", err.Error())
 		}
 		actualTables[tableName] = struct{}{}
 	}
 
-	fmt.Printf("Actual tables : %s\n", actualTables)
-
 	for expectedTable := range expectedTables {
 		if _, exists := actualTables[expectedTable]; !exists {
-			fmt.Printf("Missing expected table: %s\n", expectedTable)
+			utils.LogError("[MariaDB] - Missing expected table: %s\n", expectedTable)
 		} else {
-			fmt.Printf("Table exists: %s\n", expectedTable)
+			utils.LogSuccess("[MariaDB] - Table exists: %s\n", expectedTable)
 		}
 	}
 
 	for actualTable := range actualTables {
 		if _, exists := expectedTables[actualTable]; !exists {
-			fmt.Printf("Unexpected table found: %s\n", actualTable)
+			utils.LogWarning("[MariaDB] - Unexpected table found: ", actualTable)
 		}
 	}
 }
@@ -64,7 +61,7 @@ func DatabaseHealthCheck(db *sql.DB) {
 func DoRequest(db *sql.DB, query string, args ...interface{}) *sql.Rows {
 	res, err := db.Query(query, args...)
 	if err != nil {
-		fmt.Println(err) // Make an utils module for logs
+		utils.LogError("[MariaDB] - %s", err.Error())
 		return nil
 	}
 	return res

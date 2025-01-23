@@ -4,17 +4,18 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
-	"fmt"
-	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/onihilist/WebAPI/pkg/databases"
+	"github.com/onihilist/WebAPI/pkg/utils"
 )
 
 type User struct {
 	ID             *int
+	PermissionID   int
 	Username       string
 	Password       string
 	Email          string
@@ -35,18 +36,18 @@ func GetUserProfile(c *gin.Context, db *sql.DB) gin.H {
 	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Phone, &user.CreationDate, &user.LastConnection, &user.LastIP)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			utils.LogWarning("[/profile/%s] - User not found", username)
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return nil
 		}
-		log.Fatal(err)
+		utils.LogError("[/profile/%s] - %s", username, err.Error())
 	}
 
 	if user.Phone == nil {
-		fmt.Println("Phone number is not available")
+		utils.LogInfo("[/profile/%s] - Phone number is not available for this user", username)
 	}
 
 	return gin.H{
-		"status":         http.StatusOK,
 		"userId":         user.ID,
 		"username":       user.Username,
 		"password":       user.Password,
@@ -65,28 +66,30 @@ func CreateUserProfile(db *sql.DB, user User) {
 	hashString := hex.EncodeToString(hash[:])
 
 	if user.Phone != nil {
-		req := `INSERT INTO users (username, password, email, phone, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?);`
+		req := `INSERT INTO users (permissionId, username, password, email, phone, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
 		databases.DoRequest(
 			db,
 			req,
+			user.PermissionID,
 			user.Username,
 			hashString,
 			user.Email,
 			user.Phone,
-			user.CreationDate,
-			user.LastConnection,
+			time.Now(),
+			time.Now(),
 			user.LastIP,
 		)
 	} else {
-		req := `INSERT INTO users (username, password, email, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?);`
+		req := `INSERT INTO users (permissionId, username, password, email, creationDate, lastConnection, lastIP) VALUES (?, ?, ?, ?, ?, ?, ?);`
 		databases.DoRequest(
 			db,
 			req,
+			user.PermissionID,
 			user.Username,
 			hashString,
 			user.Email,
-			user.CreationDate,
-			user.LastConnection,
+			time.Now(),
+			time.Now(),
 			user.LastIP,
 		)
 	}
