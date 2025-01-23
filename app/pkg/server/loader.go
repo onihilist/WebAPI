@@ -45,6 +45,7 @@ func LoadRoutes(db *sql.DB) *gin.Engine {
 		}
 
 		user := api.User{
+			PermissionID:   3,
 			Username:       c.PostForm("username"),
 			Password:       c.PostForm("password"),
 			Email:          c.PostForm("email"),
