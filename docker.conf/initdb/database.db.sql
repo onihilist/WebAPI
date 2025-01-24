@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `creationDate` DATETIME NOT NULL,
     `lastConnection` DATETIME NOT NULL,
     `lastIP` VARCHAR(45) NOT NULL,
+    `session_id` VARCHAR(512),
     PRIMARY KEY(`id`),
     FOREIGN KEY (`permissionId`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
 );
