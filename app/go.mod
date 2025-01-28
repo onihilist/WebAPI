@@ -50,6 +50,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rogpeppe/godef v1.1.2 // indirect
+	github.com/thinkerou/favicon v0.2.0
 	github.com/tpng/gopkgs v0.0.0-20180428091733-81e90e22e204 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect

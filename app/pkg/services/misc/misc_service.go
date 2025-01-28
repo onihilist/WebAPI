@@ -1,13 +1,17 @@
-package api
+package misc
 
 import (
 	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	miscRepository "github.com/onihilist/WebAPI/pkg/repositories/misc"
 	"github.com/onihilist/WebAPI/pkg/utils"
-	_ "modernc.org/sqlite"
 )
+
+type MiscService struct {
+	MiscRepository miscRepository.MiscRepository
+}
 
 func LoginAdmin(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -55,4 +59,11 @@ func LoginAdmin(db *sql.DB) gin.HandlerFunc {
 			"message": "Login successful",
 		})
 	}
+}
+
+func Ping(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"status":  http.StatusOK,
+		"message": "pong",
+	})
 }
