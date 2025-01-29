@@ -21,7 +21,7 @@ import (
 )
 
 type App struct {
-	UserController UserController.UserController
+	UserController *UserController.UserController
 	MiscController MiscController.MiscController
 	DB             *sql.DB
 }
@@ -52,6 +52,7 @@ func SetupRouter() *gin.Engine {
 	// gin.DisableConsoleColor()
 
 	db := databases.DatabaseConnect()
+
 	databases.DatabaseHealthCheck(db)
 
 	app := InitializeApp(db)

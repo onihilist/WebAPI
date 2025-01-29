@@ -11,11 +11,11 @@ import (
 )
 
 type UserService struct {
-	UserRepo userRepository.UserRepository
+	UserRepo *userRepository.UserRepository
 }
 
-func NewUserService(repo userRepository.UserRepository) UserService {
-	return UserService{repo}
+func NewUserService(repo *userRepository.UserRepository) *UserService {
+	return &UserService{repo}
 }
 
 func (us *UserService) CreateUser(user entities.User) error {

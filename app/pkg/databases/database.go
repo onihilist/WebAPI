@@ -12,10 +12,12 @@ func DatabaseConnect() *sql.DB {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		utils.LogFatal("[MariaDB] - %s", err.Error())
+		return nil
 	}
 
 	if err := db.Ping(); err != nil {
 		utils.LogFatal("[MariaDB] - %s", err.Error())
+		return nil
 	}
 
 	return db

@@ -16,8 +16,8 @@ type UserRepository struct {
 	DB *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) UserRepository {
-	return UserRepository{db}
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{DB: db}
 }
 
 // CreateUser Profile creates a new user profile in the database.
@@ -62,12 +62,29 @@ func (ur *UserRepository) GetUser(username string) (*entities.User, error) {
 	utils.LogWarning("test finito")
 
 	var user entities.User
-	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Phone, &user.CreationDate, &user.LastConnection, &user.LastIP)
+	var creationDateBytes, lastConnectionBytes []byte
+
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Phone, &creationDateBytes, &lastConnectionBytes, &user.LastIP)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
+	}
+
+	// Convertir les []byte en time.Time
+	if len(creationDateBytes) > 0 {
+		user.CreationDate, err = time.Parse("2006-01-02 15:04:05", string(creationDateBytes))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if len(lastConnectionBytes) > 0 {
+		user.LastConnection, err = time.Parse("2006-01-02 15:04:05", string(lastConnectionBytes))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &user, nil

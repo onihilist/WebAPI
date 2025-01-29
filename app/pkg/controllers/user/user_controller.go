@@ -18,11 +18,11 @@ import (
 )
 
 type UserController struct {
-	UserService service.UserService
+	UserService *service.UserService
 }
 
-func NewUserController(service service.UserService) UserController {
-	return UserController{}
+func NewUserController(service *service.UserService) *UserController {
+	return &UserController{service}
 }
 
 // CreateUser  handles the creation of a new user.
@@ -80,15 +80,17 @@ func (uc *UserController) GetUser(c *gin.Context) {
 		utils.LogInfo("[/profile/%s] - Phone number is not available for this user", username)
 	}
 
+	utils.LogInfo("data : %v", user)
+
 	c.HTML(http.StatusOK, "profile.html", gin.H{
-		"userId":         user.ID,
-		"username":       user.Username,
-		"password":       user.Password, // Consider omitting this
-		"email":          user.Email,
-		"phone":          user.Phone,
-		"creationDate":   user.CreationDate,
-		"lastConnection": user.LastConnection,
-		"lastIP":         user.LastIP,
+		"UserId":         user.ID,
+		"Username":       user.Username,
+		"Password":       user.Password, // Consider omitting this
+		"Email":          user.Email,
+		"Phone":          user.Phone,
+		"CreationDate":   user.CreationDate,
+		"LastConnection": user.LastConnection,
+		"LastIP":         user.LastIP,
 	})
 }
 
