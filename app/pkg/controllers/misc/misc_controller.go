@@ -12,6 +12,10 @@ type MiscController struct {
 	MiscService service.MiscService
 }
 
+func NewMiscController(service service.MiscService) MiscController {
+	return MiscController{service}
+}
+
 func Ping(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"status":  http.StatusOK,
@@ -19,6 +23,6 @@ func Ping(c *gin.Context) {
 	})
 }
 
-func (c *gin.Context) {
+func FormCreateUser(c *gin.Context) {
 	c.HTML(http.StatusOK, "create-user.html", nil)
 }

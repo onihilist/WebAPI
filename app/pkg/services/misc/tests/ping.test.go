@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/onihilist/WebAPI/pkg/server"
+	"github.com/onihilist/WebAPI/pkg/routes"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPingRoute(t *testing.T) {
-	router := server.SetupRouter()
+	router := routes.SetupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ping", nil)

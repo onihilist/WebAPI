@@ -1,11 +1,11 @@
-package server
+package middlewares
 
 import (
 	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/onihilist/WebAPI/pkg/api"
+	"github.com/onihilist/WebAPI/pkg/entities"
 	"github.com/onihilist/WebAPI/pkg/utils"
 	_ "modernc.org/sqlite"
 )
@@ -13,7 +13,7 @@ import (
 var dataAuth = make(map[string]string)
 
 func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
-	rows, err := db.Query("SELECT username, password FROM users WHERE permissionId=1")
+	rows, err := db.Query("SELECT username, password FROM users WHERE permission_id=1")
 	if err != nil {
 		utils.LogError("[MariaDB] - %s", err.Error())
 		return gin.Accounts{}
@@ -22,7 +22,7 @@ func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
 
 	accounts := gin.Accounts{}
 	for rows.Next() {
-		var user api.User
+		var user entities.User
 		if err := rows.Scan(&user.Username, &user.Password); err != nil {
 			utils.LogError("[MariaDB] - %s", err.Error())
 			continue
@@ -33,15 +33,34 @@ func GetMiddlewareAdminAuth(db *sql.DB) gin.Accounts {
 	return accounts
 }
 
-func MiddlewareAdmin(c *gin.Context) {
-	user := c.MustGet(gin.AuthUserKey).(string)
+func MiddlewareAdmin(accounts gin.Accounts) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get(gin.AuthUserKey)
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.Abort()
+			return
+		}
 
-	var json struct {
-		Value string `json:"value" binding:"required"`
-	}
+		username, ok := user.(string)
+		if !ok || accounts[username] == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.Abort()
+			return
+		}
 
-	if c.Bind(&json) == nil {
-		dataAuth[user] = json.Value
+		var json struct {
+			Value string `json:"value" binding:"required"`
+		}
+
+		if err := c.ShouldBindJSON(&json); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+			c.Abort()
+			return
+		}
+
+		dataAuth[username] = json.Value
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK})
+		c.Next()
 	}
 }
