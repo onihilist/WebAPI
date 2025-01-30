@@ -10,12 +10,55 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navbar ul li {
+            margin-right: 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .navbar ul li a:hover {
+            color: #28a745;
+        }
+
+        .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .container {
             max-width: 600px;
-            margin: auto;
+            margin: 20px auto;
             background: white;
             padding: 20px;
             border-radius: 5px;
@@ -59,11 +102,11 @@
         }
 
         .delete-button {
-            background-color: #dc3545; /* Red color for delete button */
+            background-color: #dc3545;
         }
 
         .delete-button:hover {
-            background-color: #c82333; /* Darker red on hover */
+            background-color: #c82333;
         }
 
         .message {
@@ -74,51 +117,54 @@
     </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+        {{ if .AvatarURL }}
+            <div class="profile-image">
+                <img src="{{ .AvatarURL }}" alt="Profile Image">
+            </div>
+        {{ else }}
+            <p>No avatar available.</p>
+        {{ end }}
+    </nav>
 
-<div class="container">
-    <h1>Profile Settings</h1>
-    <form id="profileForm">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+    <div class="container">
+        <h1>Profile Settings</h1>
+        <form action="/profile/upload/avatar" method="post" enctype="multipart/form-data" id="profileForm">
+            <input type="hidden" name="userID" value="{{ .sessionID }}">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="{{ .Username }}">
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="{{ .Email }}">
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
 
-        <button type="submit">Save Changes</button>
-    </form>
-    <button class="delete-button" id="deleteAccountButton">Delete Account</button>
-    <div class="message" id="message"></div>
-</div>
+            <label for="password">Profile picture</label>
+            <input type="file" name="avatar" accept="image/*">
+            <button type="submit">Upload</button>
 
-<script>
-    document.getElementById('profileForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting the traditional way
-
-        // Get form data
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        // Here you would typically send the data to your server
-        // For demonstration, we'll just show a success message
-        document.getElementById('message').innerText = 'Profile updated successfully!';
-        
-        // Reset the form
-        this.reset();
-    });
-
-    document.getElementById('deleteAccountButton').addEventListener('click', function() {
-        const confirmation = confirm("Are you sure you want to delete your account? This action cannot be undone.");
-        if (confirmation) {
-            // Here you would typically send a request to your server to delete the account
-            // For demonstration, we'll just show a success message
-            document.getElementById('message').innerText = 'Account deleted successfully!';
-        }
-    });
-</script>
-
+            <button type="submit">Save Changes</button>
+        </form>
+        <div class="actions">
+            <button onclick="location.href='/edit-profile'">Edit Profile</button>
+            <button onclick="location.href='/change-password'">Change Password</button>
+            <button class="delete-button" onclick="confirmDelete()">Delete Account</button>
+        </div>
+        <script>
+            function confirmDelete() {
+                if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+                    window.location.href = "/delete-account";
+                }
+            }
+        </script>
+        <div class="message" id="message"></div>
+    </div>
 </body>
 </html>

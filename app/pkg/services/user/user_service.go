@@ -30,18 +30,13 @@ func (us *UserService) GetUser(username string) (*entities.User, error) {
 	return us.UserRepo.GetUser(username)
 }
 
-func (us *UserService) GetUserBySessionID(sessionID interface{}) (entities.User, string, error) {
+func (us *UserService) GetUserBySessionID(sessionID interface{}) (entities.User, error) {
 	user, err := us.UserRepo.GetUserBySessionID(sessionID)
 	if err != nil {
-		return entities.User{}, "", err
+		return entities.User{}, err
 	}
 
-	permission, err := us.UserRepo.GetPermissionByID(int(user.PermissionID))
-	if err != nil {
-		return user, "", err
-	}
-
-	return user, permission, nil
+	return user, err
 }
 
 func (us *UserService) LoginAdmin(username, password string) (bool, error) {
@@ -61,6 +56,26 @@ func (us *UserService) GetUsersByPermission(idPermission int) (*entities.User, e
 	return us.UserRepo.GetUsersByPermission(idPermission)
 }
 
-func (us *UserService) UpdateSessionCookie(sessionID interface{}) (sql.Result, error) {
-	return us.UserRepo.UpdateSessionCookie(sessionID)
+func (us *UserService) UpdateSessionCookie(sessionID interface{}, username string) (sql.Result, error) {
+	return us.UserRepo.UpdateSessionCookie(sessionID, username)
+}
+
+func (us *UserService) DeleteSessionCookie(sessionID interface{}) (sql.Result, error) {
+	return us.UserRepo.DeleteSessionCookie(sessionID)
+}
+
+func (us *UserService) UploadAvatar(username string, filePath string) (sql.Result, error) {
+	return us.UserRepo.UploadAvatar(username, filePath)
+}
+
+func (us *UserService) UpdateUsername(username string, sessionID interface{}) (sql.Result, error) {
+	return us.UserRepo.UpdateUsername(username, sessionID)
+}
+
+func (us *UserService) UpdatePassword(password string, sessionID interface{}) (sql.Result, error) {
+	return us.UserRepo.UpdatePassword(password, sessionID)
+}
+
+func (us *UserService) UpdateEmail(email string, sessionID interface{}) (sql.Result, error) {
+	return us.UserRepo.UpdateEmail(email, sessionID)
 }

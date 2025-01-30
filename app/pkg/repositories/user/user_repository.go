@@ -57,9 +57,7 @@ func (ur *UserRepository) CreateUser(user entities.User) error {
 func (ur *UserRepository) GetUser(username string) (*entities.User, error) {
 	query := "SELECT id, username, password, email, phone, creationDate, lastConnection, lastIP FROM users WHERE username = ?"
 
-	utils.LogWarning("test")
 	row := ur.DB.QueryRow(query, username)
-	utils.LogWarning("test finito")
 
 	var user entities.User
 	var creationDateBytes, lastConnectionBytes []byte
@@ -121,8 +119,10 @@ func (ur *UserRepository) GetUsersByPermission(idPermission int) (*entities.User
 }
 
 func (ur *UserRepository) GetUserBySessionID(sessionID interface{}) (entities.User, error) {
+	utils.LogInfo("[UserRepository] - Search session_id : %s", sessionID)
 	var user entities.User
-	err := ur.DB.QueryRow("SELECT username, email, phone, permission_id FROM users WHERE session_id = ?", sessionID).Scan(&user.Username, &user.Email, &user.Phone, &user.PermissionID)
+	err := ur.DB.QueryRow("SELECT username, password, email, phone, avatar_url FROM users WHERE session_id = ?", sessionID).Scan(&user.Username, &user.Password, &user.Email, &user.Phone, &user.AvatarURL)
+	utils.LogInfo("%s", user.Username)
 	return user, err
 }
 
@@ -132,6 +132,26 @@ func (ur *UserRepository) GetPermissionByID(permissionID int) (string, error) {
 	return permission, err
 }
 
-func (ur *UserRepository) UpdateSessionCookie(session interface{}) (sql.Result, error) {
-	return ur.DB.Exec(`UPDATE users SET session_id=NULL WHERE session_id=?`, session)
+func (ur *UserRepository) UpdateSessionCookie(session interface{}, username string) (sql.Result, error) {
+	return ur.DB.Exec(`UPDATE users SET session_id=? WHERE username=?`, session, username)
+}
+
+func (ur *UserRepository) DeleteSessionCookie(sessionID interface{}) (sql.Result, error) {
+	return ur.DB.Exec(`UPDATE users SET session_id=NULL WHERE session_id=?`, sessionID)
+}
+
+func (ur *UserRepository) UploadAvatar(username string, filePath string) (sql.Result, error) {
+	return ur.DB.Exec(`UPDATE users SET avatar_url=? WHERE username=?`, filePath, username)
+}
+
+func (ur *UserRepository) UpdateUsername(username string, sessionID interface{}) (sql.Result, error) {
+	return ur.DB.Exec(`UPDATE users SET username=? WHERE session_id=?`, username, sessionID)
+}
+
+func (ur *UserRepository) UpdatePassword(password string, sessionID interface{}) (sql.Result, error) {
+	return ur.DB.Exec(`UPDATE users SET username=? WHERE session_id=?`, password, sessionID)
+}
+
+func (ur *UserRepository) UpdateEmail(email string, sessionID interface{}) (sql.Result, error) {
+	return ur.DB.Exec(`UPDATE users SET username=? WHERE session_id=?`, email, sessionID)
 }

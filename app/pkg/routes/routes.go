@@ -32,13 +32,11 @@ func LoadRoutes(app *App) *gin.Engine {
 	})
 
 	// PROFILE ROUTES
-	r.GET("/profile/:name", app.UserController.GetUser)
 	r.GET("/profile/create", misc.FormCreateUser)
+	r.GET("/profile/:name", app.UserController.GetUser)
+	r.GET("/profile/settings", app.UserController.UserSettings)
 	r.POST("/profile/create/submit", app.UserController.CreateUser)
-
-	r.GET("/profile/settings", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "profile-settings.html", nil)
-	})
+	r.POST("/profile/upload/avatar", app.UserController.UploadAvatar)
 
 	// ADMIN ROUTES
 	adminAccounts := middlewares.GetMiddlewareAdminAuth(app.DB)

@@ -1,9 +1,11 @@
 package entities
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
-	ID             *uint     `json:"id"`
+	ID             *uint     `json:"id,omitempty"`
 	PermissionID   uint      `json:"permission_id"`
 	Username       string    `json:"username"`
 	Password       string    `json:"-"`
@@ -13,4 +15,5 @@ type User struct {
 	LastConnection time.Time `json:"lastConnection"`
 	LastIP         string    `json:"lastIP"`
 	SessionID      *string   `json:"session_id,omitempty"`
+	AvatarURL      *string   `json:"avatar_url,omitempty"`
 }
