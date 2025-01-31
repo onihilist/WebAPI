@@ -34,6 +34,7 @@ func LoadRoutes(app *App) *gin.Engine {
 
 	// PROFILE ROUTES
 	r.GET("/profile/create", misc.FormCreateUser)
+	r.GET("/profile/delete" /* create the controller */)
 	r.GET("/profile/:name", app.UserController.GetUser)
 	r.GET("/profile/settings", app.UserController.UserSettings)
 	r.POST("/profile/create/submit", app.UserController.CreateUser)

@@ -148,19 +148,18 @@
 
             <label for="password">Profile picture</label>
             <input type="file" name="avatar" accept="image/*">
-            <button type="submit" style="margin-top: 50px;">Upload</button>
+            <button type="submit" style="width: 100px; height: 35px;">Upload</button>
 
             <button type="submit">Save Changes</button>
         </form>
         <div class="actions">
-            <button onclick="location.href='/edit-profile'">Edit Profile</button>
-            <button onclick="location.href='/change-password'">Change Password</button>
+            <button onclick="location.href='/profile/change-password'">Change Password</button>
             <button class="delete-button" onclick="confirmDelete()">Delete Account</button>
         </div>
         <script>
             function confirmDelete() {
                 if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-                    window.location.href = "/delete-account";
+                    window.location.href = "/profile/delete";
                 }
             }
         </script>
