@@ -3,31 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Username }}'s profile</title>
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <title>{{ .Username }}'s Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #28a745;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .profile-info {
+            margin-bottom: 20px;
+        }
+
+        .profile-info h2 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+
+        .profile-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .profile-info th, .profile-info td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .profile-info th {
+            background-color: #f4f4f9;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .actions button:hover {
+            background-color: #218838;
+        }
+
+        .actions .delete-button {
+            background-color: #dc3545;
+        }
+
+        .actions .delete-button:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome {{ .Username }} !</h1>
-    <table>
-        <tr>
-          <th>id</th>
-          <th>username</th>
-          <th>password</th>
-          <th>email</th>
-          <th>phone</th>
-          <th>creationDate</th>
-          <th>lastConnection</th>
-          <th>lastIP</th>
-        </tr>
-        <tr>
-          <td>{{ .UserID }}</td>
-          <td>{{ .Username }}</td>
-          <td>{{ .Password }}</td>
-          <td>{{ .Email }}</td>
-          <td>{{ .Phone }}</td>
-          <td>{{ .CreationDate }}</td>
-          <td>{{ .LastConnection }}</td>
-          <td>{{ .LastIP }}</td>
-        </tr>
-      </table>
+    <div class="container">
+        <!-- En-tête du profil -->
+        <div class="profile-header">
+            <!-- Affichage de la photo de profil -->
+            {{ if .AvatarURL }}
+              <img src="{{ .AvatarURL }}" alt="Profile Picture" class="profile-avatar">
+            {{ end }}
+            <h1>Welcome, {{ .Username }}!</h1>
+        </div>
+
+        <!-- Informations du profil -->
+        <div class="profile-info">
+            <h2>Profile Details</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ .UserID }}</td>
+                </tr>
+                <tr>
+                    <th>Username</th>
+                    <td>{{ .Username }}</td>
+                </tr>
+                <tr>
+                    <th>Password</th>
+                    <td>••••••••</td> <!-- Masqué pour des raisons de sécurité -->
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ .Email }}</td>
+                </tr>
+                <tr>
+                    <th>Phone</th>
+                    <td>{{ .Phone }}</td>
+                </tr>
+                <tr>
+                    <th>Creation Date</th>
+                    <td>{{ .CreationDate }}</td>
+                </tr>
+                <tr>
+                    <th>Last Connection</th>
+                    <td>{{ .LastConnection }}</td>
+                </tr>
+                <tr>
+                    <th>Last IP</th>
+                    <td>{{ .LastIP }}</td>
+                </tr>
+            </table>
+        </div>
+        <!-- Ajoutez ici d'autres sections si nécessaire -->
+    </div>
 </body>
 </html>

@@ -22,7 +22,7 @@ INSERT INTO `permissions` (`permission`) VALUES
 -- Create a users table
 CREATE TABLE IF NOT EXISTS `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `permissionId` INT NOT NULL,
+    `permission_id` INT NOT NULL,
     `username` VARCHAR(255) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL UNIQUE,
@@ -31,15 +31,16 @@ CREATE TABLE IF NOT EXISTS `users` (
     `lastConnection` DATETIME NOT NULL,
     `lastIP` VARCHAR(45) NOT NULL,
     `session_id` VARCHAR(512),
+    `avatar_url` VARCHAR(512),
     PRIMARY KEY(`id`),
-    FOREIGN KEY (`permissionId`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
+    FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
 );
 
 -- Insert a sample user into the users table
-INSERT INTO `users` (permissionId, username, password, email, phone, creationDate, lastConnection, lastIP) VALUES 
-(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', NULL, NOW(), NOW(), '127.0.0.1'),
-(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', "0606060606", NOW(), NOW(), '127.0.0.1'),
-(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', "0707070707", NOW(), NOW(), '127.0.0.1');
+INSERT INTO `users` (permission_id, username, password, email, phone, creationDate, lastConnection, lastIP, avatar_url) VALUES 
+(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', "null", NOW(), NOW(), '127.0.0.1', "null"),
+(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', "0606060606", NOW(), NOW(), '127.0.0.1', "null"),
+(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', "0707070707", NOW(), NOW(), '127.0.0.1', "null");
 
 -- Create a table to store schema information
 CREATE TABLE IF NOT EXISTS `maria_schema` (
