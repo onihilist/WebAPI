@@ -68,6 +68,10 @@ func (us *UserService) UploadAvatar(username string, filePath string) (sql.Resul
 	return us.UserRepo.UploadAvatar(username, filePath)
 }
 
+func (us *UserService) DeleteAvatar(username string) (string, error) {
+	return us.UserRepo.DeleteAvatar(username)
+}
+
 func (us *UserService) UpdateUsername(username string, sessionID interface{}) (sql.Result, error) {
 	return us.UserRepo.UpdateUsername(username, sessionID)
 }

@@ -310,6 +310,8 @@ func (uc *UserController) UploadAvatar(c *gin.Context) {
 		os.Mkdir(uploadDir, 0755)
 	}
 
+	uc.UserService.DeleteAvatar(user.Username)
+
 	filename := filepath.Join(uploadDir, user.Username+"_"+file.Filename)
 
 	if err := c.SaveUploadedFile(file, filename); err != nil {

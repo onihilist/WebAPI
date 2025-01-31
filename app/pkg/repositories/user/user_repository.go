@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"os"
 	"time"
 
 	"github.com/onihilist/WebAPI/pkg/entities"
@@ -132,6 +133,12 @@ func (ur *UserRepository) GetPermissionByID(permissionID int) (string, error) {
 	return permission, err
 }
 
+func (ur *UserRepository) GetAvatarPathByUsername(username string) (string, error) {
+	var filePath string
+	err := ur.DB.QueryRow("SELECT avatar_url FROM users WHERE username = ?", username).Scan(&filePath)
+	return filePath, err
+}
+
 func (ur *UserRepository) UpdateSessionCookie(session interface{}, username string) (sql.Result, error) {
 	return ur.DB.Exec(`UPDATE users SET session_id=? WHERE username=?`, session, username)
 }
@@ -142,6 +149,25 @@ func (ur *UserRepository) DeleteSessionCookie(sessionID interface{}) (sql.Result
 
 func (ur *UserRepository) UploadAvatar(username string, filePath string) (sql.Result, error) {
 	return ur.DB.Exec(`UPDATE users SET avatar_url=? WHERE username=?`, filePath, username)
+}
+
+func (ur *UserRepository) DeleteAvatar(username string) (string, error) {
+	path, err := ur.GetAvatarPathByUsername(username)
+	if err != nil {
+		utils.LogError("[UserRepository/DeleteAvatar] - %s", err)
+	} else {
+		if path == "" {
+			utils.LogWarning("[UserRepository/DeleteAvatar] - Avatar path is empty for user : %s", username)
+			return "", nil
+		} else {
+			err = os.Remove(path)
+			if err != nil {
+				utils.LogError("[UserRepository/DeleteAvatar] - Failed to delete avatar : %s", err)
+				return path, err
+			}
+		}
+	}
+	return path, err
 }
 
 func (ur *UserRepository) UpdateUsername(username string, sessionID interface{}) (sql.Result, error) {

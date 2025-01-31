@@ -16,6 +16,7 @@ func LoadRoutes(app *App) *gin.Engine {
 	store := sessions.NewCookieStore([]byte("store_session"))
 
 	r.LoadHTMLGlob("templates/*")
+	r.Static("/uploads", "./uploads")
 	r.Use(sessions.Sessions("gin_session", store))
 	//r.SetTrustedProxies(nil)
 
