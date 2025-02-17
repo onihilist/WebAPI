@@ -15,8 +15,16 @@ func LoadRoutes(app *App) *gin.Engine {
 	r := gin.Default()
 	store := sessions.NewCookieStore([]byte("store_session"))
 
-	r.LoadHTMLGlob("templates/*")
+	// LOAD HTML TEMPLATES
+	r.LoadHTMLFiles("templates/login.html",
+		"templates/create-user.html",
+		"templates/profile-settings.html",
+		"templates/profile.html",
+		"templates/partials/navbar.html",
+		"templates/partials/header.html")
+
 	r.Static("/uploads", "./uploads")
+	r.Static("/public", "./public")
 	r.Use(sessions.Sessions("gin_session", store))
 	//r.SetTrustedProxies(nil)
 
@@ -25,9 +33,7 @@ func LoadRoutes(app *App) *gin.Engine {
 	r.GET("/ping", misc.Ping)
 
 	// LOGIN ROUTES
-	r.GET("/login", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "login.html", nil)
-	})
+	r.GET("/login", app.UserController.LoginPage)
 	r.POST("/login/check", func(c *gin.Context) {
 		app.UserController.LoginUser(c)
 	})

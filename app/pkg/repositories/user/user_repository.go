@@ -56,14 +56,14 @@ func (ur *UserRepository) CreateUser(user entities.User) error {
 }
 
 func (ur *UserRepository) GetUser(username string) (*entities.User, error) {
-	query := "SELECT id, username, password, email, phone, creationDate, lastConnection, lastIP FROM users WHERE username = ?"
+	query := "SELECT id, username, password, email, phone, creationDate, lastConnection, lastIP, avatar_url FROM users WHERE username = ?"
 
 	row := ur.DB.QueryRow(query, username)
 
 	var user entities.User
 	var creationDateBytes, lastConnectionBytes []byte
 
-	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Phone, &creationDateBytes, &lastConnectionBytes, &user.LastIP)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Phone, &creationDateBytes, &lastConnectionBytes, &user.LastIP, &user.AvatarURL)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -134,9 +134,17 @@ func (ur *UserRepository) GetPermissionByID(permissionID int) (string, error) {
 }
 
 func (ur *UserRepository) GetAvatarPathByUsername(username string) (string, error) {
-	var filePath string
+	var filePath sql.NullString
 	err := ur.DB.QueryRow("SELECT avatar_url FROM users WHERE username = ?", username).Scan(&filePath)
-	return filePath, err
+	if err != nil {
+		return "", err
+	}
+
+	if filePath.Valid {
+		return filePath.String, nil
+	}
+
+	return "", nil
 }
 
 func (ur *UserRepository) UpdateSessionCookie(session interface{}, username string) (sql.Result, error) {

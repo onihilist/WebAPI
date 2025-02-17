@@ -1,138 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Settings</title>
+    {{ template "header.html" . }}
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+        .profile-avatar-container {
+            position: relative;
+            display: inline-block;
         }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
-            color: white;
-        }
-
-        .navbar ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        .navbar ul li {
-            margin-right: 20px;
-        }
-
-        .navbar ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .navbar ul li a:hover {
-            color: #28a745;
-        }
-
-        .profile-image {
-            width: 40px;
-            height: 40px;
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed rgb(78, 78, 78);
             border-radius: 50%;
-            overflow: hidden;
+            position: relative;
+            transition: opacity 0.5s cubic-bezier(0.57, 0.01, 0.38, 1.04);
         }
 
-        .profile-image img {
+        .profile-avatar:hover {
+            opacity: 0.5;
+        }
+
+        .profile-avatar:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background-color: rgba(39, 39, 39, 0.5);
+            mix-blend-mode: color;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .profile-avatar-container:hover .profile-avatar {
+            opacity: 0.8;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 5px -11px 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .edit-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(128, 128, 128, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 16px;
-            margin: 8px;
+            width: 30px;
+            height: 30px;
         }
 
-        button:hover {
-            background-color: #218838;
+        .image-requirements {
+            margin-top: 10px;
+            color: #555;
+            font-size: 14px;
         }
 
-        .delete-button {
-            background-color: #dc3545;
+        .image-requirements a {
+            color: #28a745;
+            text-decoration: none;
         }
 
-        .delete-button:hover {
-            background-color: #c82333;
-        }
-
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            color: green;
+        .image-requirements a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
-        </ul>
-        {{ if .AvatarURL }}
-            <div class="profile-image">
-                <img src="{{ .AvatarURL }}" alt="Profile Image">
-            </div>
-        {{ else }}
-            <p>No avatar available.</p>
-        {{ end }}
-    </nav>
-
+    {{ template "navbar.html" . }}
     <div class="container">
         <h1>Profile Settings</h1>
         <form action="/profile/upload/avatar" method="post" enctype="multipart/form-data" id="profileForm">
@@ -144,12 +80,27 @@
             <input type="email" id="email" name="email" placeholder="{{ .Email }}">
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password">
+            <input type="password" id="password" name="password" style="display: flex;">
 
-            <label for="password">Profile picture</label>
-            <input type="file" name="avatar" accept="image/*">
+            <label for="avatar">Profile Picture</label>
+            <div class="profile-avatar-container">
+                <a href="#" onclick="document.getElementById('avatarInput').click(); return false;">
+                    {{ if .AvatarURL }}
+                        <img src="{{ .AvatarURL }}" alt="Profile Picture" class="profile-avatar">
+                    {{ else }}
+                        <img src="/public/img/default_user.png" alt="Default Profile Picture" class="profile-avatar">
+                    {{ end }}
+                    <div class="edit-icon">
+                        <i class="bi bi-pencil-square" style="color: black;"></i>
+                    </div>
+                </a>
+                <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;">
+            </div>
+            <div class="image-requirements">
+                Max size: 2MB, dimensions: 750x750. Image must comply with the <a href="/regulations" target="_blank">regulations</a>.
+            </div>
+
             <button type="submit" style="width: 100px; height: 35px;">Upload</button>
-
             <button type="submit">Save Changes</button>
         </form>
         <div class="actions">

@@ -1,81 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 5px -11px 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            color: red;
-        }
-    </style>
+    {{ template "header.html" . }}
 </head>
 <body>
+    <!-- Include Navbar -->
+    {{ template "navbar.html" . }}
     <div class="container">
         <h1>User Login</h1>
         <form id="loginForm" method="POST" action="/login/check">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+            <label for="username" style="text-align: center;">Username</label>
+            <input type="text" id="username" name="username" style="display: flex; text-align: center;" required>
     
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <label for="password" style="text-align: center;">Password</label>
+            <input type="password" id="password" name="password" style="display: flex; text-align: center;" required>
     
             <button type="submit">Login</button>
         </form>
-        <div class="message" id="message"></div>
+        <div class="message-error" id="message-error"></div>
     </div>
 </body>
 </html>
