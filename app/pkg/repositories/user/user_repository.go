@@ -122,7 +122,7 @@ func (ur *UserRepository) GetUsersByPermission(idPermission int) (*entities.User
 func (ur *UserRepository) GetUserBySessionID(sessionID interface{}) (entities.User, error) {
 	utils.LogInfo("[UserRepository] - Search session_id : %s", sessionID)
 	var user entities.User
-	err := ur.DB.QueryRow("SELECT username, password, email, phone, avatar_url FROM users WHERE session_id = ?", sessionID).Scan(&user.Username, &user.Password, &user.Email, &user.Phone, &user.AvatarURL)
+	err := ur.DB.QueryRow("SELECT username, password, email, phone, avatar_url, session_id FROM users WHERE session_id = ?", sessionID).Scan(&user.Username, &user.Password, &user.Email, &user.Phone, &user.AvatarURL, &user.SessionID)
 	utils.LogInfo("%s", user.Username)
 	return user, err
 }
@@ -160,22 +160,32 @@ func (ur *UserRepository) UploadAvatar(username string, filePath string) (sql.Re
 }
 
 func (ur *UserRepository) DeleteAvatar(username string) (string, error) {
+	// Récupérer le chemin de l'avatar pour l'utilisateur donné
 	path, err := ur.GetAvatarPathByUsername(username)
 	if err != nil {
 		utils.LogError("[UserRepository/DeleteAvatar] - %s", err)
-	} else {
-		if path == "" {
-			utils.LogWarning("[UserRepository/DeleteAvatar] - Avatar path is empty for user : %s", username)
-			return "", nil
-		} else {
-			err = os.Remove(path)
-			if err != nil {
-				utils.LogError("[UserRepository/DeleteAvatar] - Failed to delete avatar : %s", err)
-				return path, err
-			}
-		}
+		return "", err
 	}
-	return path, err
+
+	if path == "" {
+		utils.LogWarning("[UserRepository/DeleteAvatar] - Avatar path is empty for user: %s", username)
+		return "", nil
+	}
+
+	utils.LogInfo("Check if the old pfp exist : %s", path)
+	if _, err := os.Stat("home/app/" + path); os.IsNotExist(err) {
+		utils.LogWarning("[UserRepository/DeleteAvatar] - File does not exist: %s", path)
+		return "", nil
+	}
+
+	utils.LogInfo("Trying to delete the old pfp : %s", path)
+	err = os.Remove("home/app/" + path)
+	if err != nil {
+		utils.LogError("[UserRepository/DeleteAvatar] - Failed to delete avatar: %s", err)
+		return path, err
+	}
+
+	return path, nil
 }
 
 func (ur *UserRepository) UpdateUsername(username string, sessionID interface{}) (sql.Result, error) {

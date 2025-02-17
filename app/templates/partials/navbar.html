@@ -2,8 +2,10 @@
 <nav class="navbar">
     <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="/profile/{{ .Username }}">Profile</a></li>
-        <li><a href="/profile/settings">Settings</a></li>
+        {{ if .SessionID }}
+            <li><a href="/profile/{{ .Username }}">Profile</a></li>
+            <li><a href="/profile/settings">Settings</a></li>
+        {{ end }}
     </ul>
     {{ if .AvatarURL }}
         <div class="profile-image">
