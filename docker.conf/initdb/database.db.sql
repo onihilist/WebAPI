@@ -38,9 +38,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- Insert a sample user into the users table
 INSERT INTO `users` (permission_id, username, password, email, phone, creationDate, lastConnection, lastIP, avatar_url) VALUES 
-(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', "null", NOW(), NOW(), '127.0.0.1', "null"),
-(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', "0606060606", NOW(), NOW(), '127.0.0.1', "null"),
-(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', "0707070707", NOW(), NOW(), '127.0.0.1', "null");
+(1, 'onhlt', '21232f297a57a5a743894a0e4a801fc3', 'onhlt@nihilism.moe', "null", NOW(), NOW(), '127.0.0.1', NULL),
+(2, 'modo', '21232f297a57a5a743894a0e4a801fc3', 'modo@nihilism.moe', "0606060606", NOW(), NOW(), '127.0.0.1', NULL),
+(3, 'user', '21232f297a57a5a743894a0e4a801fc3', 'user@nihilism.moe', "0707070707", NOW(), NOW(), '127.0.0.1', NULL);
 
 -- Create a table to store schema information
 CREATE TABLE IF NOT EXISTS `maria_schema` (

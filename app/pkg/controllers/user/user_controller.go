@@ -64,9 +64,19 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 
 // GetUser Profile handles the request to retrieve a user profile.
 func (uc *UserController) GetUser(c *gin.Context) {
+
 	username := c.Param("name")
+	session := sessions.Default(c)
+	userID := session.Get("session_id")
 
 	user, err := uc.UserService.GetUser(username)
+	if err != nil {
+		utils.LogError("[/profile/%s] - %s", username, err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	visitor, err := uc.UserService.GetUserBySessionID(userID)
 	if err != nil {
 		utils.LogError("[/profile/%s] - %s", username, err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
@@ -86,6 +96,8 @@ func (uc *UserController) GetUser(c *gin.Context) {
 	utils.LogInfo("data : %v", user)
 
 	c.HTML(http.StatusOK, "profile.html", gin.H{
+		"AvatarURL":      visitor.AvatarURL,
+		"UserAvatarURL":  user.AvatarURL,
 		"UserId":         user.ID,
 		"Username":       user.Username,
 		"Password":       user.Password, // Consider omitting this
@@ -327,4 +339,25 @@ func (uc *UserController) UploadAvatar(c *gin.Context) {
 	}
 
 	c.Redirect(http.StatusFound, "/profile/"+user.Username)
+}
+
+func (uc *UserController) LoginPage(c *gin.Context) {
+	type Response struct {
+		Status   int     `json:"status"`
+		Role     string  `json:"role"`
+		Username string  `json:"username"`
+		Email    string  `json:"email"`
+		Phone    *string `json:"phone"`
+	}
+
+	session := sessions.Default(c)
+	userID := session.Get("session_id")
+
+	user, err := uc.UserService.GetUserBySessionID(userID)
+	if err != nil {
+		utils.LogWarning("[UserController/LoginPage] - %s", err)
+		c.HTML(http.StatusOK, "login.html", nil)
+	} else {
+		c.Redirect(http.StatusSeeOther, "/profile/"+user.Username)
+	}
 }

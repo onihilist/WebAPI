@@ -1,0 +1,17 @@
+<!-- navbar.html -->
+<nav class="navbar">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/profile/{{ .Username }}">Profile</a></li>
+        <li><a href="/profile/settings">Settings</a></li>
+    </ul>
+    {{ if .AvatarURL }}
+        <div class="profile-image">
+            <img src="{{ .AvatarURL }}" alt="Profile Image">
+        </div>
+    {{ else }}
+        <div class="profile-image">
+            <img src="/public/img/default_user.png" alt="Profile Image">
+        </div>
+    {{ end }}
+</nav>

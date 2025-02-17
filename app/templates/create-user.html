@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Submission</title>
+    {{ template "header.html" . }}
 </head>
 <body>
+    <!-- Include Navbar -->
+    {{ template "navbar.html" . }}
     <h1>Submit Your Information</h1>
     <form action="/profile/create/submit" method="POST">
         <label for="username">Username :</label>

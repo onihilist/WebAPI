@@ -14,7 +14,7 @@ down:
 
 delete:
 	@docker rm mariadb
-	@docker rm app
+	@docker rm webapi-app
 
 restart:
 	@docker compose restart
