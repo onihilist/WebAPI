@@ -1,0 +1,29 @@
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-info {
+    margin-bottom: 20px;
+}
+
+.profile-info h2 {
+    color: #28a745;
+    margin-bottom: 10px;
+}
+
+.profile-info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.profile-info th, .profile-info td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.profile-info th {
+    background-color: #f4f4f9;
+}

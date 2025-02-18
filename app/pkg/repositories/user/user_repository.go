@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/onihilist/WebAPI/pkg/entities"
@@ -160,7 +161,7 @@ func (ur *UserRepository) UploadAvatar(username string, filePath string) (sql.Re
 }
 
 func (ur *UserRepository) DeleteAvatar(username string) (string, error) {
-	// Récupérer le chemin de l'avatar pour l'utilisateur donné
+
 	path, err := ur.GetAvatarPathByUsername(username)
 	if err != nil {
 		utils.LogError("[UserRepository/DeleteAvatar] - %s", err)
@@ -173,6 +174,8 @@ func (ur *UserRepository) DeleteAvatar(username string) (string, error) {
 	}
 
 	utils.LogInfo("Check if the old pfp exist : %s", path)
+	errorRm := exec.Command("rm -rf", path)
+	utils.LogInfo("output command : %s", errorRm)
 	if _, err := os.Stat("home/app/" + path); os.IsNotExist(err) {
 		utils.LogWarning("[UserRepository/DeleteAvatar] - File does not exist: %s", path)
 		return "", nil
