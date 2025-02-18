@@ -78,7 +78,7 @@ func (uc *UserController) GetUser(c *gin.Context) {
 
 	visitor, err := uc.UserService.GetUserBySessionID(userID)
 	if err != nil {
-		utils.LogError("[/profile/%s] - %s", username, err.Error())
+		utils.LogError("[/profile/%s] - %s", userID, err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
@@ -98,6 +98,7 @@ func (uc *UserController) GetUser(c *gin.Context) {
 	c.HTML(http.StatusOK, "profile.html", gin.H{
 		"AvatarURL":      visitor.AvatarURL,
 		"UserAvatarURL":  user.AvatarURL,
+		"SessionID":      visitor.SessionID,
 		"UserId":         user.ID,
 		"Username":       user.Username,
 		"Password":       user.Password, // Consider omitting this
@@ -189,7 +190,7 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 			session.Set("session_id", encodedSessionID)
 			session.Save()
 			uc.UserService.UpdateSessionCookie(encodedSessionID, username) // MAKE CONTROLLER/REPO/SERVICE FOR "sessions"
-			c.JSON(http.StatusOK, gin.H{"message": "You are logged in !"})
+			c.Redirect(http.StatusFound, "/profile/"+username)
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Wrong username or password"})
 		}
@@ -279,6 +280,7 @@ func (uc *UserController) UserSettings(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{"error": userErr})
 		} else {*/
 	c.HTML(http.StatusOK, "profile-settings.html", gin.H{
+		"SessionID": user.SessionID,
 		"AvatarURL": user.AvatarURL,
 		"Username":  user.Username,
 		"Email":     user.Email,
@@ -317,7 +319,7 @@ func (uc *UserController) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	uploadDir := "./uploads"
+	uploadDir := "./uploads/pp"
 	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 		os.Mkdir(uploadDir, 0755)
 	}
@@ -332,7 +334,7 @@ func (uc *UserController) UploadAvatar(c *gin.Context) {
 	}
 
 	// Mettre à jour l'URL de l'avatar dans la base de données
-	avatarURL := "/uploads/" + filepath.Base(filename)
+	avatarURL := "/uploads/pp/" + filepath.Base(filename)
 	if _, err := uc.UserService.UploadAvatar(user.Username, avatarURL); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update avatar URL"})
 		return
