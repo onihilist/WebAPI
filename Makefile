@@ -17,4 +17,6 @@ delete:
 	@docker rm webapi-app
 
 restart:
-	@docker compose restart
+	@make down
+	@make clean
+	@make up

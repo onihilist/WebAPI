@@ -8,7 +8,7 @@
     {{ template "navbar.html" . }}
     <div class="container">
         <h1>Profile Settings</h1>
-        <form action="/profile/upload/avatar" method="post" enctype="multipart/form-data" id="profileForm">
+        <form action="/profile/save-changes" method="post" enctype="multipart/form-data" id="profileForm">
             <input type="hidden" name="userID" value="{{ .sessionID }}">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="{{ .Username }}">
@@ -37,8 +37,8 @@
                 Max size: 2MB, dimensions: 750x750. Image must comply with the <a href="/regulations" target="_blank">regulations</a>.
             </div>
 
-            <button type="submit" style="width: 100px; height: 35px;">Upload</button>
-            <button type="submit">Save Changes</button>
+            <button type="submit" name="action" style="width: 100px; height: 35px;" value="change-avatar">Upload</button>
+            <button type="submit" name="action" value="save-changes">Save Changes</button>
         </form>
         <div class="actions">
             <button onclick="location.href='/profile/change-password'">Change Password</button>

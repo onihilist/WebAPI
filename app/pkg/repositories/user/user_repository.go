@@ -196,9 +196,9 @@ func (ur *UserRepository) UpdateUsername(username string, sessionID interface{})
 }
 
 func (ur *UserRepository) UpdatePassword(password string, sessionID interface{}) (sql.Result, error) {
-	return ur.DB.Exec(`UPDATE users SET username=? WHERE session_id=?`, password, sessionID)
+	return ur.DB.Exec(`UPDATE users SET password=? WHERE session_id=?`, password, sessionID)
 }
 
 func (ur *UserRepository) UpdateEmail(email string, sessionID interface{}) (sql.Result, error) {
-	return ur.DB.Exec(`UPDATE users SET username=? WHERE session_id=?`, email, sessionID)
+	return ur.DB.Exec(`UPDATE users SET email=? WHERE session_id=?`, email, sessionID)
 }

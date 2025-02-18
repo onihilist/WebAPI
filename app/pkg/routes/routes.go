@@ -20,6 +20,7 @@ func LoadRoutes(app *App) *gin.Engine {
 		"templates/create-user.html",
 		"templates/profile-settings.html",
 		"templates/profile.html",
+		"templates/index.html",
 		"templates/partials/navbar.html",
 		"templates/partials/header.html")
 
@@ -29,7 +30,7 @@ func LoadRoutes(app *App) *gin.Engine {
 	//r.SetTrustedProxies(nil)
 
 	// MISC ROUTES
-	r.GET("/")
+	r.GET("/", app.MiscController.Index)
 	r.GET("/ping", misc.Ping)
 
 	// LOGIN ROUTES
@@ -44,7 +45,7 @@ func LoadRoutes(app *App) *gin.Engine {
 	r.GET("/profile/:name", app.UserController.GetUser)
 	r.GET("/profile/settings", app.UserController.UserSettings)
 	r.POST("/profile/create/submit", app.UserController.CreateUser)
-	r.POST("/profile/upload/avatar", app.UserController.UploadAvatar)
+	r.POST("/profile/save-changes", app.UserController.SaveChanges)
 
 	// ADMIN ROUTES
 	adminAccounts := middlewares.GetMiddlewareAdminAuth(app.DB)

@@ -8,12 +8,27 @@
         {{ end }}
     </ul>
     {{ if .AvatarURL }}
-        <div class="navbar-profile-image">
+        <div class="navbar-profile-image" id="avatar">
             <img src="{{ .AvatarURL }}" alt="Profile Image">
         </div>
     {{ else }}
-        <div class="navbar-profile-image">
-            <img src="/public/img/default_user.png" alt="Profile Image">
+        <div class="navbar-login-button" id="avatar">
+            <button class="login-button">Mon Profil</button>
         </div>
     {{ end }}
 </nav>
+
+<!-- Slide-out menu -->
+<div class="slide-out-menu" id="slideOutMenu">
+    <ul>
+        {{ if .SessionID }}
+            <li><a href="/profile/{{ .Username }}">Profile</a></li>
+            <li><a href="/profile/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        {{ else }}
+            <li><a href="/login">Login</a></li>
+        {{ end }}
+    </ul>
+</div>
+
+<script src="../../public/js/navbar-slide-out.js"></script>
