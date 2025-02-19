@@ -27,7 +27,6 @@ func NewUserController(service *service.UserService) *UserController {
 	return &UserController{service}
 }
 
-// CreateUser  handles the creation of a new user.
 func (uc *UserController) CreateUser(c *gin.Context) {
 
 	phone := c.PostForm("phone")
@@ -69,45 +68,50 @@ func (uc *UserController) GetUser(c *gin.Context) {
 	session := sessions.Default(c)
 	userID := session.Get("session_id")
 
-	user, err := uc.UserService.GetUser(username)
-	if err != nil {
-		utils.LogError("[/profile/%s] - %s", username, err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-		return
+	if userID != nil {
+
+		user, err := uc.UserService.GetUser(username)
+		if err != nil {
+			utils.LogError("[/profile/%s] - %s", username, err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
+		}
+
+		visitor, err := uc.UserService.GetUserBySessionID(userID)
+		if err != nil {
+			utils.LogError("[/profile/%s] - %s", userID, err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
+		}
+
+		if user == nil {
+			utils.LogWarning("[/profile/%s] - User not found", username)
+			c.JSON(http.StatusNotFound, gin.H{"error": "User  not found"})
+			return
+		}
+
+		if user.Phone == nil {
+			utils.LogInfo("[/profile/%s] - Phone number is not available for this user", username)
+		}
+
+		utils.LogInfo("data : %v", user)
+
+		c.HTML(http.StatusOK, "profile.html", gin.H{
+			"AvatarURL":      visitor.AvatarURL,
+			"UserAvatarURL":  user.AvatarURL,
+			"SessionID":      visitor.SessionID,
+			"UserId":         user.ID,
+			"Username":       user.Username,
+			"Password":       user.Password, // Consider omitting this
+			"Email":          user.Email,
+			"Phone":          user.Phone,
+			"CreationDate":   user.CreationDate,
+			"LastConnection": user.LastConnection,
+			"LastIP":         user.LastIP,
+		})
+	} else {
+		c.Redirect(http.StatusUnauthorized, "/login")
 	}
-
-	visitor, err := uc.UserService.GetUserBySessionID(userID)
-	if err != nil {
-		utils.LogError("[/profile/%s] - %s", userID, err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-		return
-	}
-
-	if user == nil {
-		utils.LogWarning("[/profile/%s] - User not found", username)
-		c.JSON(http.StatusNotFound, gin.H{"error": "User  not found"})
-		return
-	}
-
-	if user.Phone == nil {
-		utils.LogInfo("[/profile/%s] - Phone number is not available for this user", username)
-	}
-
-	utils.LogInfo("data : %v", user)
-
-	c.HTML(http.StatusOK, "profile.html", gin.H{
-		"AvatarURL":      visitor.AvatarURL,
-		"UserAvatarURL":  user.AvatarURL,
-		"SessionID":      visitor.SessionID,
-		"UserId":         user.ID,
-		"Username":       user.Username,
-		"Password":       user.Password, // Consider omitting this
-		"Email":          user.Email,
-		"Phone":          user.Phone,
-		"CreationDate":   user.CreationDate,
-		"LastConnection": user.LastConnection,
-		"LastIP":         user.LastIP,
-	})
 }
 
 func (uc *UserController) GetUserBySessionID(c *gin.Context) {
@@ -198,6 +202,7 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 	}
 }
 
+// Add returns the sum of two integers.
 func (uc *UserController) LoginAdmin(c *gin.Context) {
 	var json struct {
 		Username string `json:"username" binding:"required"`
@@ -273,73 +278,98 @@ func (uc *UserController) UserSettings(c *gin.Context) {
 
 	session := sessions.Default(c)
 	sessionID := session.Get("session_id")
-	utils.LogInfo("%s", sessionID)
-	user, _ := uc.UserService.GetUserBySessionID(sessionID)
-	/*
-		if userErr != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": userErr})
-		} else {*/
-	c.HTML(http.StatusOK, "profile-settings.html", gin.H{
-		"SessionID": user.SessionID,
-		"AvatarURL": user.AvatarURL,
-		"Username":  user.Username,
-		"Email":     user.Email,
-		"Phone":     user.Phone, // Add phone field
-	})
-	//}
+	if sessionID != nil {
+		user, _ := uc.UserService.GetUserBySessionID(sessionID)
+		/*
+			if userErr != nil {
+				c.JSON(http.StatusNotFound, gin.H{"error": userErr})
+			} else {*/
+		c.HTML(http.StatusOK, "profile-settings.html", gin.H{
+			"SessionID": user.SessionID,
+			"AvatarURL": user.AvatarURL,
+			"Username":  user.Username,
+			"Email":     user.Email,
+			"Phone":     user.Phone, // Add phone field
+		})
+		//}
+	} else {
+		c.Redirect(http.StatusUnauthorized, "/login")
+	}
 }
 
-func (uc *UserController) UpdateUser(c *gin.Context) {
-
-	session := sessions.Default(c)
-	sessionID := session.Get("session_id")
-
-	newUsername := c.PostForm("username")
-	newPassword := c.PostForm("password")
-	newEmail := c.PostForm("email")
-
-	uc.UserService.UpdateUsername(newUsername, sessionID)
-	uc.UserService.UpdatePassword(newPassword, sessionID)
-	uc.UserService.UpdateEmail(newEmail, sessionID)
-
-}
-
-func (uc *UserController) UploadAvatar(c *gin.Context) {
+func (uc *UserController) SaveChanges(c *gin.Context) {
 
 	session := sessions.Default(c)
 	sessionID := session.Get("session_id")
 	user, userErr := uc.UserService.GetUserBySessionID(sessionID)
-	file, fileErr := c.FormFile("avatar")
 
-	if fileErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
-		return
-	} else if userErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong session_id"})
-		return
+	action := c.PostForm("action")
+	username := c.PostForm("username")
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+
+	if sessionID != nil {
+
+		if action == "change-avatar" {
+
+			file, fileErr := c.FormFile("avatar")
+
+			if fileErr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
+				return
+			} else if userErr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong session_id"})
+				return
+			}
+
+			uploadDir := "./uploads/pp"
+			if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+				os.Mkdir(uploadDir, 0755)
+			}
+
+			uc.UserService.DeleteAvatar(user.Username)
+
+			filename := filepath.Join(uploadDir, user.Username+"_"+file.Filename)
+
+			if err := c.SaveUploadedFile(file, filename); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+				return
+			}
+
+			avatarURL := "/uploads/pp/" + filepath.Base(filename)
+			if _, err := uc.UserService.UploadAvatar(user.Username, avatarURL); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update avatar URL"})
+				return
+			}
+		} else if action == "save-changes" {
+
+			if email != "" {
+				_, err := uc.UserService.UpdateEmail(email, sessionID)
+				if err != nil {
+					utils.LogError("%s", err)
+				}
+			}
+
+			if password != "" {
+				hashPass := md5.Sum([]byte(password))
+				hashString := hex.EncodeToString(hashPass[:])
+				_, err := uc.UserService.UpdatePassword(hashString, sessionID)
+				if err != nil {
+					utils.LogError("%s", err)
+				}
+			}
+
+			if username != "" {
+				_, err := uc.UserService.UpdateUsername(username, sessionID)
+				if err != nil {
+					utils.LogError("%s", err)
+				}
+				c.Redirect(http.StatusFound, "/profile/"+username)
+			}
+		}
+	} else {
+		c.Redirect(http.StatusUnauthorized, "/login")
 	}
-
-	uploadDir := "./uploads/pp"
-	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
-		os.Mkdir(uploadDir, 0755)
-	}
-
-	uc.UserService.DeleteAvatar(user.Username)
-
-	filename := filepath.Join(uploadDir, user.Username+"_"+file.Filename)
-
-	if err := c.SaveUploadedFile(file, filename); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
-		return
-	}
-
-	// Mettre à jour l'URL de l'avatar dans la base de données
-	avatarURL := "/uploads/pp/" + filepath.Base(filename)
-	if _, err := uc.UserService.UploadAvatar(user.Username, avatarURL); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update avatar URL"})
-		return
-	}
-
 	c.Redirect(http.StatusFound, "/profile/"+user.Username)
 }
 

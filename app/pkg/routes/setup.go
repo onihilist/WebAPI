@@ -38,7 +38,7 @@ func InitializeApp(db *sql.DB) *App {
 
 	// Initialize controllers
 	userController := UserController.NewUserController(userService)
-	MiscController := MiscController.NewMiscController(miscService)
+	MiscController := MiscController.NewMiscController(userController, miscService)
 
 	return &App{
 		UserController: userController,
