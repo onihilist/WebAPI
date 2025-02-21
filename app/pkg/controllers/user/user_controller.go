@@ -110,7 +110,7 @@ func (uc *UserController) GetUser(c *gin.Context) {
 			"LastIP":         user.LastIP,
 		})
 	} else {
-		c.Redirect(http.StatusUnauthorized, "/login")
+		c.Redirect(302, "/login") // Change 302 by http.Status...
 	}
 }
 
