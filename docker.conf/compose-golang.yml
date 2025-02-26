@@ -4,18 +4,19 @@
 
 services:
   app:
+    container_name: ${APP_CONTAINER_NAME}
     build:
       context: ../
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:${APP_PORT}"
     networks:
         - labnet
     environment:
-      - DB_HOST=mariadb
-      - DB_USER=appuser
-      - DB_PASSWORD=letmein
-      - DB_NAME=appdb
+      - DB_HOST=${MARIA_HOST}
+      - DB_USER=${MARIA_USER}
+      - DB_PASSWORD=${MARIA_PASSWORD}
+      - DB_NAME=${MARIA_NAME}
 
 networks:
   labnet:
