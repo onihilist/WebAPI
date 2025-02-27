@@ -39,3 +39,5 @@ Just restart your app container, the app start a little too early.
 - [ ] Databases 
     - [ ] Add enable parameter in each database env file 
     - [ ] Make module for handle PostgreSQL
+- [ ] Templates
+    - [ ] Rework template User to send just the object
